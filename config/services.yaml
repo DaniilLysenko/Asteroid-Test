@@ -1,0 +1,37 @@
+parameters:
+    test_db_path: '%kernel.cache_dir%/db.sqlite'
+    default_db_path: '%kernel.cache_dir%/snapshot.sqlite'
+    server_name: localhost
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    App\:
+        resource: '../src/'
+        exclude:
+            - '../src/DependencyInjection/'
+            - '../src/Entity/'
+            - '../src/Kernel.php'
+            - '../src/Tests/'
+        bind:
+            GuzzleHttp\Client $client: '@nasa_api_client'
+            string $nasaApiKey: '%env(NASA_API_KEY)%'
+
+    App\Controller\:
+        resource: '../src/Controller/'
+        tags: ['controller.service_arguments']
+
+    nasa_api_client:
+        class: GuzzleHttp\Client
+        arguments:
+            - base_uri: 'https://api.nasa.gov/'
+
+    App\Command\TestFixturesLoaderCommand:
+        calls:
+            - { method: setKernel, arguments: [ '@kernel' ] }
+            - { method: setDefaultPath, arguments: [ '%default_db_path%' ] }
+            - { method: setTestDbPath, arguments: [ '%test_db_path%' ] }
+        tags:
+            - { name: console.command }

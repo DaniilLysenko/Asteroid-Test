@@ -1,0 +1,22 @@
+<?php
+
+$finder = PhpCsFixer\Finder::create()
+    ->in(['bin', 'config', 'public', 'src', 'templates', 'tests']);
+
+return PhpCsFixer\Config::create()
+    ->setRules([
+        '@PhpCsFixer' => true,
+        '@PhpCsFixer:risky' => true,
+        '@DoctrineAnnotation' => true,
+        '@PHP73Migration' => true,
+        '@PHP71Migration:risky' => true,
+        '@PHPUnit75Migration:risky' => true,
+        'declare_strict_types' => true,
+        'list_syntax' => ['syntax' => 'short'],
+        'mb_str_functions' => true,
+        'no_superfluous_phpdoc_tags' => true,
+        'phpdoc_to_return_type' => true,
+        'yoda_style' => false,
+    ])
+    ->setRiskyAllowed(true)
+    ->setFinder($finder);

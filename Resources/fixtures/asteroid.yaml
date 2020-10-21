@@ -1,0 +1,25 @@
+App\Entity\Asteroid:
+    asteroid_1:
+        date: '<dateTimeBetween("-1 days", "now")>'
+        name: 'Asteroid 1'
+        reference: 34625
+        hazardous: false
+        speed: 345.76
+    asteroid_2:
+        date: '<dateTimeBetween("-2 days", "now")>'
+        name: 'Asteroid 2'
+        reference: 34626
+        hazardous: true
+        speed: 565.36
+    asteroid_3:
+        date: '<dateTimeBetween("-1 days", "now")>'
+        name: 'Asteroid 3'
+        reference: 34627
+        hazardous: true
+        speed: 675.12
+    asteroid_4:
+        date: '<dateTimeBetween("-3 days", "now")>'
+        name: 'Asteroid 4'
+        reference: 34628
+        hazardous: false
+        speed: 385.76
