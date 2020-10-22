@@ -1,11 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Command;
 
 use App\Entity\Asteroid;
 use Doctrine\Persistence\ManagerRegistry;
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\GuzzleException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -43,7 +44,7 @@ class ParseAsteroidsDataCommand extends Command
 
         try {
             $request = $this->nasaApiClient->get(
-                'neo/rest/v1/feed/?start_date=' . $startDate . '&end_date=' . $endDate . '&api_key=' . $this->nasaApiKey
+                'neo/rest/v1/feed/?start_date='.$startDate.'&end_date='.$endDate.'&api_key='.$this->nasaApiKey
             );
 
             if ($request->getStatusCode() === Response::HTTP_OK) {
@@ -54,12 +55,17 @@ class ParseAsteroidsDataCommand extends Command
                     $i = 0;
                     foreach ($asteroidsData->near_earth_objects as $date => $data) {
                         foreach ($data as $asteroidData) {
+                            $asteroid = $this->doctrine->getRepository(Asteroid::class)->findOneBy(['reference' => $asteroidData->neo_reference_id]);
+                            if ($asteroid) {
+                                continue;
+                            }
+
                             $asteroid = (new Asteroid())
                                 ->setDate(new \DateTime($date))
                                 ->setName($asteroidData->name)
                                 ->setReference($asteroidData->neo_reference_id)
                                 ->setHazardous($asteroidData->is_potentially_hazardous_asteroid)
-                                ->setSpeed(reset($asteroidData->close_approach_data)->relative_velocity->kilometers_per_hour);
+                                ->setSpeed(reset($asteroidData->close_approach_data)->relative_velocity->kilometers_per_hour)
                             ;
 
                             $em->persist($asteroid);

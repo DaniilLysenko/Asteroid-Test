@@ -1,0 +1,13 @@
+doctrine:
+    dbal:
+        driver: pdo_sqlite
+        memory:   true
+        charset:  UTF8
+        mapping_types:
+            enum: string
+        url: 'sqlite:///%test_db_path%'
+    orm:
+        dql:
+            string_functions:
+                MONTH: DoctrineExtensions\Query\Sqlite\Month
+                YEAR: DoctrineExtensions\Query\Sqlite\Year

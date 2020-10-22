@@ -1,13 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Controller\Api;
 
 use App\Tests\AppTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
-class NeoAsteroidControllerTest extends AppTestCase
+/**
+ * @internal
+ * @covers \App\Controller\Api\NeoAsteroidController
+ */
+final class NeoAsteroidControllerTest extends AppTestCase
 {
-    public function testHazardous()
+    public function testHazardous(): void
     {
         $this->client->request('GET', '/api/neo/hazardous');
 
@@ -24,14 +30,14 @@ class NeoAsteroidControllerTest extends AppTestCase
         ]);
     }
 
-    public function testHazardousMethodNotAllowed()
+    public function testHazardousMethodNotAllowed(): void
     {
         $this->client->request('POST', '/api/neo/hazardous');
 
         static::assertSame(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
     }
 
-    public function testFastestWithNoHazardous()
+    public function testFastestWithNoHazardous(): void
     {
         $this->client->request('GET', '/api/neo/fastest');
 
@@ -49,7 +55,7 @@ class NeoAsteroidControllerTest extends AppTestCase
         static::assertSame(385.76, $result->asteroid->speed);
     }
 
-    public function testFastestWithHazardous()
+    public function testFastestWithHazardous(): void
     {
         $this->client->request('GET', '/api/neo/fastest?hazardous=true');
 
@@ -67,9 +73,43 @@ class NeoAsteroidControllerTest extends AppTestCase
         static::assertSame(675.12, $result->asteroid->speed);
     }
 
-    public function testFastestMethodNotAllowed()
+    public function testFastestMethodNotAllowed(): void
     {
         $this->client->request('POST', '/api/neo/fastest?hazardous=true');
+
+        static::assertSame(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
+    }
+
+    /**
+     * @dataProvider getBestMonthData
+     */
+    public function testBestMonth($hazardous, $resultMonth): void
+    {
+        $this->client->request('GET', '/api/neo/best-month?hazardous='.$hazardous);
+
+        static::assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $result = json_decode($this->client->getResponse()->getContent());
+
+        static::assertObjectHasAttribute('month', $result);
+        static::assertIsString($result->month);
+        static::assertSame($resultMonth, $result->month);
+    }
+
+    public function getBestMonthData(): array
+    {
+        return [
+            [
+                false, (new \DateTime('-1 month'))->format('F Y'),
+            ],
+            [
+                true, (new \DateTime())->format('F Y'),
+            ],
+        ];
+    }
+
+    public function testBestMonthMethodNotAllowed(): void
+    {
+        $this->client->request('POST', '/api/neo/best-month');
 
         static::assertSame(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
     }
