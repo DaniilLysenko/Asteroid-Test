@@ -45,14 +45,27 @@ class AsteroidRepository extends ServiceEntityRepository
         ;
     }
 
+//    public function findBestMonth(bool $hazardous)
+//    {
+//        $connection = $this->getEntityManager()->getConnection();
+//        $sql = 'SELECT MAX(ast.astCount) AS astMaxCount, ast.date FROM (SELECT COUNT(id) as astCount, `date` FROM asteroid WHERE hazardous = ? GROUP BY MONTH(`date`), YEAR(`date`)) AS ast';
+//        $sql = $connection->prepare($sql);
+//        $sql->bindValue(1, $hazardous, ParameterType::BOOLEAN);
+//        $sql->execute();
+//
+//        return $sql->fetchAllAssociative();
+//    }
+
     public function findBestMonth(bool $hazardous)
     {
-        $connection = $this->getEntityManager()->getConnection();
-        $sql = 'SELECT MAX(ast.astCount) AS astMaxCount, ast.date FROM (SELECT COUNT(id) as astCount, `date` FROM asteroid WHERE hazardous = ? GROUP BY MONTH(`date`), YEAR(`date`)) AS ast';
-        $sql = $connection->prepare($sql);
-        $sql->bindValue(1, $hazardous, ParameterType::BOOLEAN);
-        $sql->execute();
-
-        return $sql->fetchAllAssociative();
+        return $this
+            ->createQueryBuilder('a')
+            ->select('COUNT(a.id) as astCount, a.date, CONCAT(MONTH(a.date), YEAR(a.date)) AS monthYear')
+            ->where('a.hazardous = :hazardous')
+            ->groupBy('monthYear')
+            ->setParameter('hazardous', $hazardous)
+            ->getQuery()
+            ->getResult()
+        ;
     }
 }

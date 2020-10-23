@@ -53,12 +53,21 @@ class NeoAsteroidController extends AbstractController
      */
     public function bestMonth(Request $request): JsonResponse
     {
-        $month = $this->getDoctrine()->getRepository(Asteroid::class)
+        $months = $this->getDoctrine()->getRepository(Asteroid::class)
             ->findBestMonth((bool) $request->query->get('hazardous', false))
         ;
 
+        $max = 0;
+        $date = null;
+        foreach ($months as $month) {
+            if ($month['astCount'] > $max) {
+                $max = $month['astCount'];
+                $date = $month['date'];
+            }
+        }
+
         return $this->json([
-            'month' => \count($month) ? (new \DateTime(reset($month)['date']))->format('F Y') : null,
+            'month' => $date ? $date->format('F Y') : null,
         ]);
     }
 }

@@ -24,19 +24,19 @@ App\Entity\Asteroid:
         hazardous: false
         speed: 385.76
     asteroid_5:
-        date: '<dateTimeBetween("-1 month")>'
+        date: '<dateTimeBetween("-1 month", "-1 month")>'
         name: 'Asteroid 5'
         reference: 34629
         hazardous: false
         speed: 347545.76
     asteroid_6:
-        date: '<dateTimeBetween("-1 month")>'
+        date: '<dateTimeBetween("-1 month", "-1 month")>'
         name: 'Asteroid 6'
         reference: 34630
         hazardous: false
         speed: 231.36
     asteroid_7:
-        date: '<dateTimeBetween("-1 month")>'
+        date: '<dateTimeBetween("-1 month", "-1 month")>'
         name: 'Asteroid 7'
         reference: 34631
         hazardous: false
