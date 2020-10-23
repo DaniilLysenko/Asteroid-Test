@@ -1,0 +1,28 @@
+version: '2'
+services:
+    mysql:
+        image: mysql:5.7
+        restart: on-failure
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: example
+    nginx:
+        image: library/nginx:1.19-alpine
+        restart: on-failure
+        links:
+            - php
+        volumes_from:
+            - php
+        volumes:
+            - ./logs/nginx/:/var/log/nginx:cached
+        ports:
+            - '80:80'
+    php:
+        build: php-fpm
+        ports:
+            - '9002:9000'
+        volumes:
+            - ../:/var/www/symfony:cached
+            - ./logs/symfony:/var/www/symfony/var/logs:cached
+        links:
+            - mysql

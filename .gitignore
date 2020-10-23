@@ -6,6 +6,7 @@
 /public/build/
 /var/
 /vendor/
+/docker/logs
 ###< symfony/framework-bundle ###
 
 ###> phpunit/phpunit ###
